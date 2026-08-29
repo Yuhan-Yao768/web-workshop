@@ -78,6 +78,13 @@ export type Message = {
   __typename?: 'message';
   content: Scalars['String']['output'];
   created_at: Scalars['timestamp']['output'];
+  /** An array relationship */
+  replies: Array<Message>;
+  /** An aggregate relationship */
+  replies_aggregate: Message_Aggregate;
+  reply_to_id?: Maybe<Scalars['uuid']['output']>;
+  /** An object relationship */
+  reply_to_message?: Maybe<Message>;
   /** An object relationship */
   room: Room;
   room_uuid: Scalars['uuid']['output'];
@@ -85,6 +92,26 @@ export type Message = {
   user: User;
   user_uuid: Scalars['uuid']['output'];
   uuid: Scalars['uuid']['output'];
+};
+
+
+/** columns and relationships of "message" */
+export type MessageRepliesArgs = {
+  distinct_on?: InputMaybe<Array<Message_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Message_Order_By>>;
+  where?: InputMaybe<Message_Bool_Exp>;
+};
+
+
+/** columns and relationships of "message" */
+export type MessageReplies_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Message_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Message_Order_By>>;
+  where?: InputMaybe<Message_Bool_Exp>;
 };
 
 /** aggregated selection of "message" */
@@ -141,6 +168,10 @@ export type Message_Bool_Exp = {
   _or?: InputMaybe<Array<Message_Bool_Exp>>;
   content?: InputMaybe<String_Comparison_Exp>;
   created_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  replies?: InputMaybe<Message_Bool_Exp>;
+  replies_aggregate?: InputMaybe<Message_Aggregate_Bool_Exp>;
+  reply_to_id?: InputMaybe<Uuid_Comparison_Exp>;
+  reply_to_message?: InputMaybe<Message_Bool_Exp>;
   room?: InputMaybe<Room_Bool_Exp>;
   room_uuid?: InputMaybe<Uuid_Comparison_Exp>;
   user?: InputMaybe<User_Bool_Exp>;
@@ -158,6 +189,9 @@ export enum Message_Constraint {
 export type Message_Insert_Input = {
   content?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  replies?: InputMaybe<Message_Arr_Rel_Insert_Input>;
+  reply_to_id?: InputMaybe<Scalars['uuid']['input']>;
+  reply_to_message?: InputMaybe<Message_Obj_Rel_Insert_Input>;
   room?: InputMaybe<Room_Obj_Rel_Insert_Input>;
   room_uuid?: InputMaybe<Scalars['uuid']['input']>;
   user?: InputMaybe<User_Obj_Rel_Insert_Input>;
@@ -170,6 +204,7 @@ export type Message_Max_Fields = {
   __typename?: 'message_max_fields';
   content?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
+  reply_to_id?: Maybe<Scalars['uuid']['output']>;
   room_uuid?: Maybe<Scalars['uuid']['output']>;
   user_uuid?: Maybe<Scalars['uuid']['output']>;
   uuid?: Maybe<Scalars['uuid']['output']>;
@@ -179,6 +214,7 @@ export type Message_Max_Fields = {
 export type Message_Max_Order_By = {
   content?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  reply_to_id?: InputMaybe<Order_By>;
   room_uuid?: InputMaybe<Order_By>;
   user_uuid?: InputMaybe<Order_By>;
   uuid?: InputMaybe<Order_By>;
@@ -189,6 +225,7 @@ export type Message_Min_Fields = {
   __typename?: 'message_min_fields';
   content?: Maybe<Scalars['String']['output']>;
   created_at?: Maybe<Scalars['timestamp']['output']>;
+  reply_to_id?: Maybe<Scalars['uuid']['output']>;
   room_uuid?: Maybe<Scalars['uuid']['output']>;
   user_uuid?: Maybe<Scalars['uuid']['output']>;
   uuid?: Maybe<Scalars['uuid']['output']>;
@@ -198,6 +235,7 @@ export type Message_Min_Fields = {
 export type Message_Min_Order_By = {
   content?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  reply_to_id?: InputMaybe<Order_By>;
   room_uuid?: InputMaybe<Order_By>;
   user_uuid?: InputMaybe<Order_By>;
   uuid?: InputMaybe<Order_By>;
@@ -212,6 +250,13 @@ export type Message_Mutation_Response = {
   returning: Array<Message>;
 };
 
+/** input type for inserting object relation for remote table "message" */
+export type Message_Obj_Rel_Insert_Input = {
+  data: Message_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Message_On_Conflict>;
+};
+
 /** on_conflict condition type for table "message" */
 export type Message_On_Conflict = {
   constraint: Message_Constraint;
@@ -223,6 +268,9 @@ export type Message_On_Conflict = {
 export type Message_Order_By = {
   content?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  replies_aggregate?: InputMaybe<Message_Aggregate_Order_By>;
+  reply_to_id?: InputMaybe<Order_By>;
+  reply_to_message?: InputMaybe<Message_Order_By>;
   room?: InputMaybe<Room_Order_By>;
   room_uuid?: InputMaybe<Order_By>;
   user?: InputMaybe<User_Order_By>;
@@ -242,6 +290,8 @@ export enum Message_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  ReplyToId = 'reply_to_id',
+  /** column name */
   RoomUuid = 'room_uuid',
   /** column name */
   UserUuid = 'user_uuid',
@@ -253,6 +303,7 @@ export enum Message_Select_Column {
 export type Message_Set_Input = {
   content?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  reply_to_id?: InputMaybe<Scalars['uuid']['input']>;
   room_uuid?: InputMaybe<Scalars['uuid']['input']>;
   user_uuid?: InputMaybe<Scalars['uuid']['input']>;
   uuid?: InputMaybe<Scalars['uuid']['input']>;
@@ -270,6 +321,7 @@ export type Message_Stream_Cursor_Input = {
 export type Message_Stream_Cursor_Value_Input = {
   content?: InputMaybe<Scalars['String']['input']>;
   created_at?: InputMaybe<Scalars['timestamp']['input']>;
+  reply_to_id?: InputMaybe<Scalars['uuid']['input']>;
   room_uuid?: InputMaybe<Scalars['uuid']['input']>;
   user_uuid?: InputMaybe<Scalars['uuid']['input']>;
   uuid?: InputMaybe<Scalars['uuid']['input']>;
@@ -281,6 +333,8 @@ export enum Message_Update_Column {
   Content = 'content',
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  ReplyToId = 'reply_to_id',
   /** column name */
   RoomUuid = 'room_uuid',
   /** column name */
@@ -1319,7 +1373,7 @@ export type User_Room_Bool_Exp = {
 
 /** unique or primary key constraints on table "user_room" */
 export enum User_Room_Constraint {
-  /** unique or primary key constraint on columns "user_uuid", "room_uuid" */
+  /** unique or primary key constraint on columns "room_uuid", "user_uuid" */
   UserRoomPkey = 'user_room_pkey'
 }
 
@@ -1508,6 +1562,23 @@ export type GetMessagesByRoomSubscriptionVariables = Exact<{
 
 export type GetMessagesByRoomSubscription = { __typename?: 'subscription_root', message: Array<{ __typename?: 'message', uuid: any, content: string, created_at: any, user: { __typename?: 'user', uuid: any, username: string } }> };
 
+export type SendReplyMessageMutationVariables = Exact<{
+  content: Scalars['String']['input'];
+  room_uuid: Scalars['uuid']['input'];
+  user_uuid: Scalars['uuid']['input'];
+  reply_to_id?: InputMaybe<Scalars['uuid']['input']>;
+}>;
+
+
+export type SendReplyMessageMutation = { __typename?: 'mutation_root', insert_message_one?: { __typename?: 'message', uuid: any, content: string, reply_to_id?: any | null, created_at: any } | null };
+
+export type GetRoomMessagesWithRepliesQueryVariables = Exact<{
+  room_uuid: Scalars['uuid']['input'];
+}>;
+
+
+export type GetRoomMessagesWithRepliesQuery = { __typename?: 'query_root', message: Array<{ __typename?: 'message', uuid: any, content: string, created_at: any, user: { __typename?: 'user', username: string }, reply_to_message?: { __typename?: 'message', uuid: any, content: string, user: { __typename?: 'user', username: string } } | null, replies: Array<{ __typename?: 'message', uuid: any, content: string, user: { __typename?: 'user', username: string } }> }> };
+
 export type AddRoomMutationVariables = Exact<{
   name: Scalars['String']['input'];
   intro: Scalars['String']['input'];
@@ -1628,6 +1699,106 @@ export function useGetMessagesByRoomSubscription(baseOptions: Apollo.Subscriptio
       }
 export type GetMessagesByRoomSubscriptionHookResult = ReturnType<typeof useGetMessagesByRoomSubscription>;
 export type GetMessagesByRoomSubscriptionResult = Apollo.SubscriptionResult<GetMessagesByRoomSubscription>;
+export const SendReplyMessageDocument = gql`
+    mutation SendReplyMessage($content: String!, $room_uuid: uuid!, $user_uuid: uuid!, $reply_to_id: uuid) {
+  insert_message_one(
+    object: {content: $content, room_uuid: $room_uuid, user_uuid: $user_uuid, reply_to_id: $reply_to_id}
+  ) {
+    uuid
+    content
+    reply_to_id
+    created_at
+  }
+}
+    `;
+export type SendReplyMessageMutationFn = Apollo.MutationFunction<SendReplyMessageMutation, SendReplyMessageMutationVariables>;
+
+/**
+ * __useSendReplyMessageMutation__
+ *
+ * To run a mutation, you first call `useSendReplyMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendReplyMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendReplyMessageMutation, { data, loading, error }] = useSendReplyMessageMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *      room_uuid: // value for 'room_uuid'
+ *      user_uuid: // value for 'user_uuid'
+ *      reply_to_id: // value for 'reply_to_id'
+ *   },
+ * });
+ */
+export function useSendReplyMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendReplyMessageMutation, SendReplyMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendReplyMessageMutation, SendReplyMessageMutationVariables>(SendReplyMessageDocument, options);
+      }
+export type SendReplyMessageMutationHookResult = ReturnType<typeof useSendReplyMessageMutation>;
+export type SendReplyMessageMutationResult = Apollo.MutationResult<SendReplyMessageMutation>;
+export type SendReplyMessageMutationOptions = Apollo.BaseMutationOptions<SendReplyMessageMutation, SendReplyMessageMutationVariables>;
+export const GetRoomMessagesWithRepliesDocument = gql`
+    query GetRoomMessagesWithReplies($room_uuid: uuid!) {
+  message(where: {room_uuid: {_eq: $room_uuid}}) {
+    uuid
+    content
+    created_at
+    user {
+      username
+    }
+    reply_to_message {
+      uuid
+      content
+      user {
+        username
+      }
+    }
+    replies {
+      uuid
+      content
+      user {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRoomMessagesWithRepliesQuery__
+ *
+ * To run a query within a React component, call `useGetRoomMessagesWithRepliesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRoomMessagesWithRepliesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRoomMessagesWithRepliesQuery({
+ *   variables: {
+ *      room_uuid: // value for 'room_uuid'
+ *   },
+ * });
+ */
+export function useGetRoomMessagesWithRepliesQuery(baseOptions: Apollo.QueryHookOptions<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables> & ({ variables: GetRoomMessagesWithRepliesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>(GetRoomMessagesWithRepliesDocument, options);
+      }
+export function useGetRoomMessagesWithRepliesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>(GetRoomMessagesWithRepliesDocument, options);
+        }
+export function useGetRoomMessagesWithRepliesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>(GetRoomMessagesWithRepliesDocument, options);
+        }
+export type GetRoomMessagesWithRepliesQueryHookResult = ReturnType<typeof useGetRoomMessagesWithRepliesQuery>;
+export type GetRoomMessagesWithRepliesLazyQueryHookResult = ReturnType<typeof useGetRoomMessagesWithRepliesLazyQuery>;
+export type GetRoomMessagesWithRepliesSuspenseQueryHookResult = ReturnType<typeof useGetRoomMessagesWithRepliesSuspenseQuery>;
+export type GetRoomMessagesWithRepliesQueryResult = Apollo.QueryResult<GetRoomMessagesWithRepliesQuery, GetRoomMessagesWithRepliesQueryVariables>;
 export const AddRoomDocument = gql`
     mutation addRoom($name: String!, $intro: String!, $invite_code: String!) {
   insert_room_one(object: {name: $name, intro: $intro, invite_code: $invite_code}) {
