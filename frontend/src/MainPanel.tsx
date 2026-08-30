@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, List, message, Modal } from "antd";
+import { Button, Form, Input, List, message, Modal, Popconfirm } from "antd";
 import {
   UserOutlined,
   LoginOutlined,
   LogoutOutlined,
   PlusOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
+import axios from "axios";
 import * as graphql from "./graphql";
 import { Bubble, Card, Link, Scroll, Text } from "./Components";
 import { user } from "./getUser";
@@ -41,6 +43,19 @@ const User: React.FC<MainPanelProps> = ({ user }) => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.get("/user/delete");
+      message.success("账号已删除！");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      message.error("删除账号失败！");
+    }
+  };
+
   return (
     <Bubble
       style={{
@@ -65,6 +80,28 @@ const User: React.FC<MainPanelProps> = ({ user }) => {
       >
         {user ? user.username : "未登录"}
       </Text>
+      {user && (
+        <Popconfirm
+          title="确定删除账号吗？此操作不可恢复！"
+          okText="删除"
+          okButtonProps={{ danger: true }}
+          cancelText="取消"
+          onConfirm={handleDeleteAccount}
+        >
+          <Button
+            type="link"
+            danger
+            style={{
+              width: "36px",
+              height: "36px",
+              fontSize: "24px",
+              marginLeft: "12px",
+            }}
+          >
+            <DeleteOutlined />
+          </Button>
+        </Popconfirm>
+      )}
       <Button
         style={{
           width: "36px",

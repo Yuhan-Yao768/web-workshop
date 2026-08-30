@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, List, message, Spin, Upload } from "antd";
+import { Button, List, message, Popconfirm, Spin, Upload } from "antd";
 import {
   InboxOutlined,
   DownloadOutlined,
   ReloadOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import * as graphql from "./graphql";
@@ -76,6 +77,17 @@ const FileShare: React.FC<FileShareProps> = ({ room, handleClose }) => {
     }
   };
 
+  const deleteFile = async (roomUUID: string, filename: string) => {
+    try {
+      await axios.post("/file/delete", { room: roomUUID, filename: filename });
+      message.success("删除文件成功！");
+      fetchFileList(roomUUID).then(setFileList);
+    } catch (error) {
+      console.error(error);
+      message.error("删除文件失败！");
+    }
+  };
+
   const handleRefresh = () => {
     setRefreshing(true);
     if (room) {
@@ -135,7 +147,11 @@ const FileShare: React.FC<FileShareProps> = ({ room, handleClose }) => {
           文件共享空间
         </Text>
       </Container>
-      <FileList roomUUID={room.uuid} filelist={fileList} />
+      <FileList
+        roomUUID={room.uuid}
+        filelist={fileList}
+        handleDelete={(filename) => deleteFile(room.uuid, filename)}
+      />
       <div
         className="need-interaction"
         style={{ marginTop: "12px", width: "100%" }}
@@ -160,9 +176,14 @@ const FileShare: React.FC<FileShareProps> = ({ room, handleClose }) => {
 interface FileListProps {
   roomUUID: string;
   filelist: string[];
+  handleDelete: (filename: string) => void;
 }
 
-const FileList: React.FC<FileListProps> = ({ roomUUID, filelist }) => {
+const FileList: React.FC<FileListProps> = ({
+  roomUUID,
+  filelist,
+  handleDelete,
+}) => {
   const Download = (filename: string) => (
     <Button
       type="link"
@@ -172,13 +193,33 @@ const FileList: React.FC<FileListProps> = ({ roomUUID, filelist }) => {
       <DownloadOutlined />
     </Button>
   );
+  const Delete = (filename: string) => (
+    <Popconfirm
+      title="确定删除该文件吗？"
+      okText="删除"
+      okButtonProps={{ danger: true }}
+      cancelText="取消"
+      onConfirm={() => handleDelete(filename)}
+    >
+      <Button
+        type="link"
+        danger
+        style={{ fontSize: "18px", width: "18px", height: "18px", padding: 0 }}
+      >
+        <DeleteOutlined />
+      </Button>
+    </Popconfirm>
+  );
   return (
     <Scroll>
       <List
         size="small"
         dataSource={filelist}
         renderItem={(filename) => (
-          <List.Item style={{ padding: "8px" }} actions={[Download(filename)]}>
+          <List.Item
+            style={{ padding: "8px" }}
+            actions={[Download(filename), Delete(filename)]}
+          >
             <Text style={{ wordBreak: "break-all" }}>{filename}</Text>
           </List.Item>
         )}
